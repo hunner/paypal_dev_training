@@ -17,7 +17,6 @@ Puppet::Type.newtype(:rcsrepo) do
   end
   newproperty(:revision) do
     desc "The revision which should be checked out"
-    defaultto("master")
     newvalues(/^\S+$/)
   end
 end

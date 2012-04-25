@@ -12,6 +12,7 @@ Puppet::Type.type(:rcsrepo).provide(:git) do
       else
         git('init', resource[:path])
       end
+      self.revision = resource[:revision] if resource[:revision]
     rescue Puppet::ExecutionFailure => e
       raise Puppet::Error, "Failed to create repository: #{e.message}"
     end
@@ -19,17 +20,17 @@ Puppet::Type.type(:rcsrepo).provide(:git) do
   end
 
   def destroy
-    FileUtils.rm_rf(resource[:path])
+    true if FileUtils.rm_rf(resource[:path])
   end
 
   def revision
-    git_path('rev-parse','HEAD')
+    git_path('rev-parse','HEAD').chomp
   end
 
   def revision=(value)
     begin
       git_path('fetch','origin')
-      git_path('checkout', resource[:revision])
+      git_path('checkout', value)
     rescue Puppet::ExecutionFailure => e
       raise Puppet::Error, "Unable to set revision: #{e.message}"
     end
@@ -38,7 +39,7 @@ Puppet::Type.type(:rcsrepo).provide(:git) do
 
   private
 
-  def git_path(args)
+  def git_path(*args)
     git('--work-tree', resource[:path], '--git-dir', File.join(resource[:path], '.git'), args)
   end
 end
