@@ -42,12 +42,14 @@ node 'devbox.puppetlabs.lan' {
   #   class { 'my_class': }
   #$foo = join(['a','b'],',')
   #$bar = inline_template("<% require 'ruby-debug' ; debugger ; 1 %>")
-  rcsrepo { 'progress repo':
-    ensure   => present,
-    path     => '/tmp/myrepo',
-    source   => 'git://github.com/hunner/progress_mq.git',
-    revision => '59a2fba50028cbb2518ea767964a1808b64f2b14',
-  }
+  #rcsrepo { 'progress repo':
+  #  ensure   => present,
+  #  path     => '/tmp/myrepo',
+  #  source   => 'git://github.com/hunner/progress_mq.git',
+  #  revision => '59a2fba50028cbb2518ea767964a1808b64f2b14',
+  #}
+  notify { "make changes": }
+  include motd
 }
 
 
