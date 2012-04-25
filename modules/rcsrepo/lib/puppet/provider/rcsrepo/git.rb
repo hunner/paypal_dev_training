@@ -23,12 +23,22 @@ Puppet::Type.type(:rcsrepo).provide(:git) do
   end
 
   def revision
-    git('--git-dir', File.join(resource[:path], '.git'), 'rev-parse','HEAD')
+    git_path('rev-parse','HEAD')
   end
 
-  #private
+  def revision=(value)
+    begin
+      git_path('fetch','origin')
+      git_path('checkout', resource[:revision])
+    rescue Puppet::ExecutionFailure => e
+      raise Puppet::Error, "Unable to set revision: #{e.message}"
+    end
+    true
+  end
 
-  #def git(args)
-  #  gitcmd('--work-tree', resource[:path], '--git-repo', File.join(resource[:path], '.git'), args)
-  #end
+  private
+
+  def git_path(args)
+    git('--work-tree', resource[:path], '--git-dir', File.join(resource[:path], '.git'), args)
+  end
 end
